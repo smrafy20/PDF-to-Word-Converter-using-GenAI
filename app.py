@@ -20,11 +20,15 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        # Check if API key is provided
+    if request.method == 'POST':        # Check if API key is provided
         api_key = request.form.get('api_key')
         if not api_key:
             flash('Please provide an API key')
+            return redirect(request.url)
+          # Get selected output format
+        output_format = request.form.get('output_format')
+        if not output_format:
+            flash('Please select an output format')
             return redirect(request.url)
         
         # Check if file is included in the request
@@ -72,29 +76,43 @@ def index():
                         all_extracted_text.append(extracted_text or f"--- ERROR EXTRACTING PAGE {i+1} ---")
                         has_errors = True
                     else:
-                        all_extracted_text.append(extracted_text)
+                        all_extracted_text.append(extracted_text)                # Output file path base (without extension)
+                output_base = os.path.splitext(filename)[0] + "_extracted"
+                generated_files = []
                 
-                # Create output docx
-                output_filename = os.path.splitext(filename)[0] + "_extracted.docx"
-                output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
+                # Create output file based on selected format
+                if output_format == 'docx':
+                    docx_filename = output_base + ".docx"
+                    docx_path = os.path.join(app.config['UPLOAD_FOLDER'], docx_filename)
+                    
+                    from docx import Document
+                    document = Document()
+                    for page_text in all_extracted_text:
+                        document.add_paragraph(page_text)
+                        document.add_page_break()
+                    document.save(docx_path)
+                    generated_files.append(('docx', docx_filename))
                 
-                from docx import Document
-                document = Document()
-                for page_text in all_extracted_text:
-                    document.add_paragraph(page_text)
-                    document.add_page_break()
-                document.save(output_path)
+                elif output_format == 'txt':
+                    txt_filename = output_base + ".txt"
+                    txt_path = os.path.join(app.config['UPLOAD_FOLDER'], txt_filename)
+                    
+                    with open(txt_path, 'w', encoding='utf-8') as txt_file:
+                        for i, page_text in enumerate(all_extracted_text):
+                            txt_file.write(page_text)
+                            if i < len(all_extracted_text) - 1:
+                                txt_file.write('\n\n--- PAGE BREAK ---\n\n')
+                    generated_files.append(('txt', txt_filename))
                 
                 # Clean up temporary directory
                 if temp_dir and os.path.exists(temp_dir):
                     shutil.rmtree(temp_dir)
-                
-                # If there were errors during processing
+                  # If there were errors during processing
                 if has_errors:
-                    flash('Some pages could not be processed correctly. Please check the downloaded file.')
+                    flash('Some pages could not be processed correctly. Please check the downloaded file(s).')
                 
-                # Provide download page
-                return render_template('download.html', filename=output_filename)
+                # Provide download page with the list of generated files
+                return render_template('download.html', files=generated_files)
             
             except Exception as e:
                 flash(f'An error occurred during processing: {str(e)}')

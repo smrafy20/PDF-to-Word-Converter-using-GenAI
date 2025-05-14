@@ -88,8 +88,7 @@
                             placeholder="Enter your Gemini API Key">
                         <div class="form-text">Your API key is required to use the Google Gemini AI model.</div>
                     </div>
-                    
-                    <div class="mb-3">
+                      <div class="mb-3">
                         <label class="form-label">PDF File</label>
                         <div class="d-flex align-items-center">
                             <label class="file-input-label">
@@ -97,6 +96,22 @@
                                 <input type="file" name="file" id="file-input" style="display: none;" accept=".pdf" required>
                             </label>
                             <span id="file-name">No file selected</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Output Format</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="output_format" value="docx" id="docx_format" checked>
+                            <label class="form-check-label" for="docx_format">
+                                DOCX Format (.docx)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="output_format" value="txt" id="txt_format">
+                            <label class="form-check-label" for="txt_format">
+                                Plain Text Format (.txt)
+                            </label>
                         </div>
                     </div>
                     
@@ -109,13 +124,12 @@
 
         <div class="card">
             <div class="card-header">Instructions</div>
-            <div class="card-body">
-                <h2>Instructions</h2>
-                <ol>
+            <div class="card-body">                <h2>Instructions</h2>                <ol>
                     <li>Enter your Gemini API key. If you don't have one, you can get it from <a href="https://ai.google.dev/" target="_blank">Google AI Studio</a>.</li>
                     <li>Upload a PDF file (max size: 64MB).</li>
+                    <li>Select your desired output format - either DOCX or TXT.</li>
                     <li>Click "Extract Text" to process the file.</li>
-                    <li>The extracted text will be saved as a .docx file that you can download.</li>
+                    <li>The extracted text will be available for download in your selected format.</li>
                 </ol>
                 <p class="text-muted small">Note: This tool works best with clear, high-quality PDFs. Processing may take some time depending on the file size and complexity.</p>
             </div>
