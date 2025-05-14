@@ -17,7 +17,7 @@ app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  # 64MB max upload size
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 ALLOWED_EXTENSIONS = {'pdf'}
-DEFAULT_API_KEY = "AIzaSyADwq4wU7teSb-fpzgU10FWOA-vWE9UCVU"  # Replace with your actual API key
+DEFAULT_API_KEY = ""  # Replace with your actual API key
 
 # Dictionary to store processing tasks
 processing_tasks = {}
