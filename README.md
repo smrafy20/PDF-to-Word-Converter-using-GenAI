@@ -63,19 +63,21 @@ Before running this application, you'll need:
    ```
 
 3. Use the web interface to:
-   - Enter your Google Gemini API key
-   - Upload a PDF file (maximum size: 16MB)
-   - Click "Extract Text" to process the file
-   - Download the extracted text as a .docx file
+   - Choose between using the default API key or providing your own Gemini API key
+   - Upload a PDF file (maximum size: 64MB)
+   - Select output format (DOCX or TXT)
+   - Monitor real-time progress with percentage and time tracking
+   - Download the extracted text in your chosen format when processing completes
 
 ## Configuration
 
 The application uses the following default settings:
 
 - Upload folder: `./uploads` (created automatically)
-- Maximum file size: 16MB
+- Maximum file size: 64MB (increased from 16MB)
 - Allowed file extensions: PDF only
-- DPI for image conversion: 300
+- Default API key: Included in the application
+- Processing tasks tracked with unique IDs
 
 ## Project Structure
 
