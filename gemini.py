@@ -19,7 +19,7 @@ INPUT_PDF = "bmcq.pdf"  # Replace with your actual PDF filename
 # Set up Gemini model
 def setup_gemini(api_key):
     genai.configure(api_key=api_key)
-    model_name = 'gemini-2.5-flash-preview-04-17'
+    model_name = 'gemini-1.5-flash'  # Changed from gemini-2.5-flash-preview-04-17
     
     print(f"Initializing Gemini model: {model_name}")
     try:
@@ -44,7 +44,7 @@ def convert_pdf_to_images(pdf_path):
     try:
         images = pdf2image.convert_from_path(
             pdf_path,
-            dpi=300,
+            dpi=100,  # Changed from 300, experiment with values like 200 or 150
             output_folder=temp_dir,
             fmt='jpeg',
             thread_count=4,
