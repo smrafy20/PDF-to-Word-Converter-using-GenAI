@@ -14,18 +14,26 @@ app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  # 64MB max upload size
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 ALLOWED_EXTENSIONS = {'pdf'}
+DEFAULT_API_KEY = "AIzaSyADwq4wU7teSb-fpzgU10FWOA-vWE9UCVU"  # Replace with your actual API key
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':        # Check if API key is provided
-        api_key = request.form.get('api_key')
-        if not api_key:
-            flash('Please provide an API key')
-            return redirect(request.url)
-          # Get selected output format
+    if request.method == 'POST':
+        # Check API key selection
+        api_key_option = request.form.get('api_key_option', 'default')
+        
+        if api_key_option == 'default':
+            api_key = DEFAULT_API_KEY
+        else:
+            api_key = request.form.get('api_key')
+            if not api_key:
+                flash('Please provide an API key')
+                return redirect(request.url)
+        
+        # Get selected output format
         output_format = request.form.get('output_format')
         if not output_format:
             flash('Please select an output format')

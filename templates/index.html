@@ -83,12 +83,29 @@
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
-                        <label for="api_key" class="form-label">Gemini API Key</label>
-                        <input type="text" class="form-control" id="api_key" name="api_key" required
-                            placeholder="Enter your Gemini API Key">
+                        <label for="api_key_option" class="form-label">API Key Options</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="api_key_option" id="default_api_key" value="default" checked>
+                            <label class="form-check-label" for="default_api_key">
+                                Use default API key
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="api_key_option" id="custom_api_key" value="custom">
+                            <label class="form-check-label" for="custom_api_key">
+                                Use my own API key
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="api_key_input_container">
+                        <label for="api_key" class="form-label">Custom Gemini API Key</label>
+                        <input type="text" class="form-control" id="api_key" name="api_key" 
+                               placeholder="Enter your Gemini API Key">
                         <div class="form-text">Your API key is required to use the Google Gemini AI model.</div>
                     </div>
-                      <div class="mb-3">
+                    
+                    <div class="mb-3">
                         <label class="form-label">PDF File</label>
                         <div class="d-flex align-items-center">
                             <label class="file-input-label">
@@ -141,6 +158,29 @@
         document.getElementById('file-input').addEventListener('change', function(e) {
             const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
             document.getElementById('file-name').textContent = fileName;
+        });
+        
+        // New script for API key option toggling
+        const apiKeyRadios = document.querySelectorAll('input[name="api_key_option"]');
+        const apiKeyContainer = document.getElementById('api_key_input_container');
+        
+        function updateApiKeyVisibility() {
+            const selectedOption = document.querySelector('input[name="api_key_option"]:checked').value;
+            if (selectedOption === 'default') {
+                apiKeyContainer.style.display = 'none';
+                document.getElementById('api_key').required = false;
+            } else {
+                apiKeyContainer.style.display = 'block';
+                document.getElementById('api_key').required = true;
+            }
+        }
+        
+        // Set initial state
+        updateApiKeyVisibility();
+        
+        // Add event listeners
+        apiKeyRadios.forEach(radio => {
+            radio.addEventListener('change', updateApiKeyVisibility);
         });
     </script>
 </body>
