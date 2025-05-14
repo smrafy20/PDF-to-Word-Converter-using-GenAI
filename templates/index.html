@@ -159,29 +159,6 @@
             const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
             document.getElementById('file-name').textContent = fileName;
         });
-        
-        // New script for API key option toggling
-        const apiKeyRadios = document.querySelectorAll('input[name="api_key_option"]');
-        const apiKeyContainer = document.getElementById('api_key_input_container');
-        
-        function updateApiKeyVisibility() {
-            const selectedOption = document.querySelector('input[name="api_key_option"]:checked').value;
-            if (selectedOption === 'default') {
-                apiKeyContainer.style.display = 'none';
-                document.getElementById('api_key').required = false;
-            } else {
-                apiKeyContainer.style.display = 'block';
-                document.getElementById('api_key').required = true;
-            }
-        }
-        
-        // Set initial state
-        updateApiKeyVisibility();
-        
-        // Add event listeners
-        apiKeyRadios.forEach(radio => {
-            radio.addEventListener('change', updateApiKeyVisibility);
-        });
     </script>
 </body>
 </html>
