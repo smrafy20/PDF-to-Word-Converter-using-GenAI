@@ -99,6 +99,15 @@ The application uses the following default settings:
 - **Processing takes a long time**: This is normal for large or complex PDFs. The extraction process involves converting each page to an image and sending it to the Gemini API.
 - **Some text is not extracted correctly**: The accuracy depends on the quality of the PDF and how the text is represented (as text or as images).
 
+## Performance Optimization
+
+To improve processing speed, especially for PDFs containing native text, this application implements a hybrid approach:
+
+1.  **Direct Text Extraction**: It first attempts to extract text directly from each PDF page using PyMuPDF (Fitz). This is very fast for text-based PDFs.
+2.  **Fallback to OCR**: If a page yields little or no text directly (indicating it might be a scanned image or have complex graphical text), the system then falls back to the original method: converting that specific page to an image and using Google Gemini for OCR.
+
+This significantly reduces processing time for many common PDF types by avoiding unnecessary image conversion and OCR steps.
+
 ## License
 
 [MIT License](LICENSE)
