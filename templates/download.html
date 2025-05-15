@@ -5,40 +5,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Download Extracted Text</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            /* Updated Color Palette - Teal Theme */
+            --primary-color: #1ABC9C; /* Teal */
+            --primary-dark: #16A085; /* Darker Teal */
+            --success-color: #2ECC71; /* Greener Success */
+            --success-dark: #27AE60; /* Darker Green for hover */
+
+            /* Light Theme Variables */
+            --body-bg-light: #F4F6F6;
+            --text-color-light: #34495E;
+            --text-light-muted: #7F8C8D;
+            --card-bg-light: #FFFFFF;
+            --card-header-bg-light: #FFFFFF; /* Cleaner header */
+            --card-border-light: #EAECEE; /* Softer border */
+            --card-shadow-light: 0 .2rem 1.5rem 0 rgba(52, 73, 94, .1); /* Softer shadow */
+
+            /* Dark Theme Variables */
+            --body-bg-dark: #2C3E50;
+            --text-color-dark: #ECF0F1;
+            --text-light-muted-dark: #BDC3C7;
+            --card-bg-dark: #34495E;
+            --card-header-bg-dark: #34495E;
+            --card-border-dark: #4A6572;
+            --card-shadow-dark: 0 .2rem 1.5rem 0 rgba(0,0,0,.2);
+            
+            /* Default assignments */
+            --body-bg: var(--body-bg-light);
+            --text-color: var(--text-color-light);
+            --text-muted: var(--text-light-muted);
+            --card-bg: var(--card-bg-light);
+            --card-header-bg: var(--card-header-bg-light);
+            --card-border: var(--card-border-light);
+            --card-shadow: var(--card-shadow-light);
+            --current-success-color: var(--success-color);
+            --current-success-dark-hover: var(--success-dark);
+            --btn-primary-bg: var(--primary-color);
+            --btn-primary-border: var(--primary-color);
+            --btn-primary-hover-bg: var(--primary-dark);
+            --btn-primary-hover-border: var(--primary-dark);
+        }
+
         body {
             padding-top: 2rem;
             padding-bottom: 2rem;
-            background-color: #f8f9fa;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        body.dark-mode {
+            --body-bg: var(--body-bg-dark);
+            --text-color: var(--text-color-dark);
+            --text-muted: var(--text-light-muted-dark);
+            --card-bg: var(--card-bg-dark);
+            --card-header-bg: var(--card-header-bg-dark);
+            --card-border: var(--card-border-dark);
+            --card-shadow: var(--card-shadow-dark);
+            --current-success-color: var(--success-dark); /* Using darker success for buttons in dark mode */
+            --current-success-dark-hover: var(--success-color); /* Lighter green for hover in dark mode, or define specific dark hover */
+            /* Update primary button colors for dark mode consistency */
+            --btn-primary-bg: var(--primary-color); /* Uses dark mode primary color from :root in body.dark-mode or explicit here */
+            --btn-primary-border: var(--primary-color);
+            --btn-primary-hover-bg: var(--primary-dark);
+            --btn-primary-hover-border: var(--primary-dark);
+        }
+        
+        .theme-toggler {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+            border-radius: 50%; /* Make it circular */
+            width: 40px; /* Fixed size */
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggler:hover {
+            background-color: var(--primary-color);
+            color: var(--card-bg) !important; 
+            border-color: var(--primary-dark);
+        }
+
         .container {
             max-width: 800px;
         }
         .header {
             margin-bottom: 2rem;
             text-align: center;
-            color: #343a40;
+            color: var(--text-color); 
+        }
+        .header h1 {
+            color: var(--primary-color); /* Header title uses primary color */
         }
         .card {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             margin-bottom: 1.5rem;
             border-radius: 8px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .card-header {
-            background-color: #f1f3f5;
-            font-weight: bold;
+            background-color: var(--card-header-bg);
+            font-weight: 600; /* Bolder header */
+            color: var(--primary-color); /* Header text uses primary color */
+            border-bottom: 1px solid var(--card-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
+        .card-body p, .card-body ul li {
+             color: var(--text-color); /* Ensure card body text is themed */
+        }
+        body.dark-mode .card-body p, body.dark-mode .card-body ul li {
+            color: var(--text-color-dark);
+        }
+
         .btn-success {
-            background-color: #198754;
-            border-color: #198754;
+            background-color: var(--current-success-color);
+            border-color: var(--current-success-color);
+            color: #fff; /* Ensure text is white */
         }
         .btn-success:hover {
-            background-color: #157347;
-            border-color: #146c43;
+            background-color: var(--current-success-dark-hover);
+            border-color: var(--current-success-dark-hover);
+            color: #fff;
+        }
+        .btn-primary {
+            background-color: var(--btn-primary-bg);
+            border-color: var(--btn-primary-border);
+            color: #fff; /* Ensure text is white */
+        }
+        .btn-primary:hover {
+            background-color: var(--btn-primary-hover-bg);
+            border-color: var(--btn-primary-hover-border);
+            color: #fff;
+        }
+        /* Style for the lead paragraph */
+        .lead {
+            color: var(--text-muted);
+            font-size: 1.20rem; /* Slightly adjusted size */
+            font-weight: 300;
         }
     </style>
 </head>
 <body>
+    <button id="theme-toggle-btn" class="btn theme-toggler" title="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
     <div class="container">
         <div class="header">
             <h1>Text Extraction Complete</h1>
@@ -81,5 +202,45 @@
             </div>
         </div>
     </div>
+    <script>
+        // Theme toggler script
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const bodyElement = document.body;
+        const themeIcon = themeToggleBtn.querySelector('i');
+
+        function applyDownloadTheme(theme) {
+            if (theme === 'dark') {
+                bodyElement.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                bodyElement.classList.remove('dark-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+
+        const currentSavedTheme = localStorage.getItem('theme');
+        if (currentSavedTheme) {
+            applyDownloadTheme(currentSavedTheme);
+        } else {
+            // Check for system preference if no theme is saved
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyDownloadTheme('dark');
+                // localStorage.setItem('theme', 'dark'); // Avoid re-setting, let user control or index page control
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (bodyElement.classList.contains('dark-mode')) {
+                applyDownloadTheme('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                applyDownloadTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

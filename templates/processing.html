@@ -5,8 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Processing PDF</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { 
+        :root {
+            /* Updated Color Palette - Teal Theme */
+            --primary-color: #1ABC9C; /* Teal */
+            --primary-dark: #16A085; /* Darker Teal */
+            --secondary-color-bootstrap: #6c757d; /* Original Bootstrap secondary for specific buttons if needed */
+            --secondary-dark-bootstrap: #5a6268;
+            --success-color: #2ECC71; /* Greener Success */
+            --danger-color: #E74C3C;  /* Softer Red for Danger */
+            
+            /* Light Theme Variables */
+            --body-bg-light: #F4F6F6; /* Very light gray */
+            --text-color-light: #34495E; /* Dark grayish blue */
+            --text-light-muted: #7F8C8D;
+            --container-bg-light: #FFFFFF;
+            --container-shadow-light: 0 .2rem 1.5rem 0 rgba(52, 73, 94, .1); /* Softer shadow */
+            --progress-container-bg-light: #EAECEE;
+            --progress-container-border-light: #D5DBDB;
+            --status-text-light: var(--text-color-light);
+            
+            /* Dark Theme Variables */
+            --body-bg-dark: #2C3E50; /* Dark desaturated blue */
+            --text-color-dark: #ECF0F1; /* Light gray */
+            --text-light-muted-dark: #BDC3C7;
+            --container-bg-dark: #34495E; /* Dark grayish blue */
+            --container-shadow-dark: 0 .2rem 1.5rem 0 rgba(0,0,0,.2);
+            --progress-container-bg-dark: #212F3C; /* Darker progress bg */
+            --progress-container-border-dark: #4A6572;
+            --status-text-dark: var(--text-color-dark);
+
+            /* Default assignments (will be overridden by body.dark-mode) */
+            --body-bg: var(--body-bg-light);
+            --text-color: var(--text-color-light);
+            --text-muted: var(--text-light-muted);
+            --container-bg: var(--container-bg-light);
+            --container-shadow: var(--container-shadow-light);
+            --progress-container-bg: var(--progress-container-bg-light);
+            --progress-container-border: var(--progress-container-border-light);
+            --status-text: var(--status-text-light);
+            --btn-primary-bg: var(--primary-color);
+            --btn-primary-hover-bg: var(--primary-dark);
+            --btn-secondary-bg: var(--secondary-color-bootstrap);
+            --btn-secondary-hover-bg: var(--secondary-dark-bootstrap);
+        }
+
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; 
             flex-direction: column; 
@@ -14,61 +59,110 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        body.dark-mode {
+            --body-bg: var(--body-bg-dark);
+            --text-color: var(--text-color-dark);
+            --text-muted: var(--text-light-muted-dark);
+            --container-bg: var(--container-bg-dark);
+            --container-shadow: var(--container-shadow-dark);
+            --progress-container-bg: var(--progress-container-bg-dark);
+            --progress-container-border: var(--progress-container-border-dark);
+            --status-text: var(--status-text-dark);
+            /* Keep primary button colors consistent with general dark mode if desired */
+            /* --btn-primary-bg: #20C9A6; */
+            /* --btn-primary-hover-bg: #1ABC9C; */
+            /* Adjust secondary button for dark mode */
+            --btn-secondary-bg: #566573;
+            --btn-secondary-hover-bg: #4A5763;
+        }
+
+        .theme-toggler {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 1px solid var(--progress-container-border);
+            border-radius: 50%; /* Make it circular */
+            width: 40px; /* Fixed size */
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggler:hover {
+            background-color: var(--primary-color);
+            color: var(--container-bg) !important; 
+            border-color: var(--primary-dark);
+        }
+
+        body.dark-mode .theme-toggler:hover {
+            background-color: var(--primary-color-light); /* Keep this consistent or define dark mode hover explicitly */
+            color: var(--container-bg-dark);
+        }
+
         .container {
             width: 90%; 
             max-width: 700px; 
-            background-color: #ffffff;
+            background-color: var(--container-bg);
             padding: 30px 40px;
             border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: var(--container-shadow);
             text-align: center;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
         }
         h1 {
-            color: #0d6efd; /* Bootstrap primary blue */
+            color: var(--primary-color); 
             margin-bottom: 25px;
         }
         .progress-container { 
             width: 100%; 
-            background-color: #e9ecef; 
+            background-color: var(--progress-container-bg); 
             border-radius: 25px; 
             margin-bottom: 20px; 
-            overflow: hidden; /* Ensures inner bar respects border radius */
-            border: 1px solid #ced4da;
+            overflow: hidden; 
+            border: 1px solid var(--progress-container-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .progress-bar { 
             width: 0%; 
             height: 35px; 
-            background-color: #0d6efd; /* Bootstrap primary blue */
+            background-color: var(--primary-color); 
             text-align: center; 
             line-height: 35px; 
             color: white; 
             font-weight: bold;
-            border-radius: 25px 0 0 25px; /* Rounded on the left */
+            border-radius: 25px 0 0 25px; 
             transition: width 0.5s ease-in-out, background-color 0.5s ease; 
         }
         .progress-bar.completed {
-            background-color: #198754; /* Bootstrap success green */
-            border-radius: 25px; /* Fully rounded when complete */
+            background-color: var(--success-color);
+            border-radius: 25px; 
         }
         .progress-bar.error {
-            background-color: #dc3545; /* Bootstrap danger red */
-            border-radius: 25px; /* Fully rounded on error */
+            background-color: var(--danger-color);
+            border-radius: 25px; 
         }
         .status-message { 
             margin-bottom: 25px; 
             font-size: 1.1em; 
-            color: #495057;
-            min-height: 2em; /* Reserve space to avoid layout jumps */
+            color: var(--status-text);
+            min-height: 2em; 
+            transition: color 0.3s ease;
         }
         .download-links a, .action-links a { 
             display: inline-block; 
             margin-top: 15px;
             margin-right: 10px;
             padding: 12px 20px; 
-            background-color: #0d6efd; 
+            background-color: var(--btn-primary-bg); 
             color: white; 
             text-decoration: none; 
             border-radius: 8px; 
@@ -76,16 +170,22 @@
             transition: background-color 0.2s ease;
         }
         .download-links a:hover, .action-links a:hover { 
-            background-color: #0b5ed7; 
+            background-color: var(--btn-primary-hover-bg); 
         }
         .action-links a.secondary {
-            background-color: #6c757d; /* Bootstrap secondary */
+            background-color: var(--btn-secondary-bg); 
+        }
+        body.dark-mode .action-links a.secondary {
+            background-color: var(--secondary-color-dark);
         }
         .action-links a.secondary:hover {
-            background-color: #5a6268;
+            background-color: var(--btn-secondary-hover-bg);
+        }
+        body.dark-mode .action-links a.secondary:hover {
+            background-color: #444b52; /* Even darker for dark mode hover */
         }
         .error-message { 
-            color: #dc3545; 
+            color: var(--danger-color); 
             font-weight: bold; 
             margin-top: 15px;
         }
@@ -94,10 +194,14 @@
             height: 1.5rem;
             margin-left: 10px;
             vertical-align: text-bottom;
+            color: var(--primary-color) !important; /* Force spinner to primary color */
         }
     </style>
 </head>
 <body>
+    <button id="theme-toggle-btn" class="btn theme-toggler" title="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
     <div class="container">
         <h1>Processing Your PDF</h1>
         
@@ -216,6 +320,44 @@
             progressBar.classList.add('error');
             addHomeLink("Return to Upload Page");
         }
+
+        // Theme toggler script
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const bodyElement = document.body;
+        const themeIcon = themeToggleBtn.querySelector('i');
+
+        function applyProcessingTheme(theme) {
+            if (theme === 'dark') {
+                bodyElement.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                bodyElement.classList.remove('dark-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+            // Adjust spinner color if needed dynamically, though CSS !important might be enough
+        }
+
+        const currentSavedTheme = localStorage.getItem('theme');
+        if (currentSavedTheme) {
+            applyProcessingTheme(currentSavedTheme);
+        } else {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyProcessingTheme('dark');
+                // localStorage.setItem('theme', 'dark'); // Set by index.html, or let user toggle
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (bodyElement.classList.contains('dark-mode')) {
+                applyProcessingTheme('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                applyProcessingTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

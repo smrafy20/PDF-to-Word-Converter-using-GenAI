@@ -3,162 +3,521 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Text Extractor</title>
+    <title>PDF to Word Converter</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            /* New Vibrant & Simple Color Palette */
+            --primary-color: #1ABC9C; /* Teal */
+            --primary-dark: #16A085; /* Darker Teal */
+            --secondary-color: #F4F6F6; /* Very light gray for body background */
+            --accent-color: #F39C12; /* Amber/Orange for specific accents - use sparingly */
+            --text-color: #34495E; /* Dark grayish blue for text */
+            --text-light: #7F8C8D; /* Lighter text for subtitles/muted text */
+            --card-bg: #FFFFFF;
+            --card-header-bg: #FFFFFF; /* Cleaner card headers */
+            --card-border-color: #EAECEE; /* Softer border */
+            --input-bg: #FFFFFF;
+            --input-border-color: #D5DBDB;
+            --input-focus-border-color: #76D7C4; /* Lighter Teal */
+            --focus-ring-color: rgba(26, 188, 156, 0.25); /* Teal based */
+            --shadow: 0 .2rem 1.5rem 0 rgba(52, 73, 94, .1); /* Softer shadow */
+
+            --body-bg: var(--secondary-color);
+            --body-text-color: var(--text-color);
+            --btn-primary-bg: var(--primary-color);
+            --btn-primary-border: var(--primary-color);
+            --btn-primary-hover-bg: var(--primary-dark);
+            --btn-primary-hover-border: var(--primary-dark);
+        }
+        
+        body.dark-mode {
+            --primary-color: #20C9A6; /* Lighter Teal for dark mode */
+            --primary-dark: #1ABC9C;
+            --secondary-color: #2C3E50; /* Dark desaturated blue for body background */
+            --accent-color: #F39C12; 
+            --text-color: #ECF0F1; /* Light gray for text */
+            --text-light: #BDC3C7; /* Slightly darker light text */
+            --card-bg: #34495E; /* Dark grayish blue for cards */
+            --card-header-bg: #34495E;
+            --card-border-color: #4A6572; /* Softer border for dark mode */
+            --input-bg: #2C3E50; /* Darker input background */
+            --input-border-color: #4A6572;
+            --input-focus-border-color: #27AE60; /* Darker Greenish Teal */
+            --focus-ring-color: rgba(32, 201, 166, 0.3);
+            --shadow: 0 .2rem 1.5rem 0 rgba(0,0,0,.2); /* Darker shadow */
+
+            --body-bg: var(--secondary-color);
+            --body-text-color: var(--text-color);
+            --btn-primary-bg: var(--primary-color);
+            --btn-primary-border: var(--primary-color);
+            --btn-primary-hover-bg: var(--primary-dark);
+            --btn-primary-hover-border: var(--primary-dark);
+        }
+        
         body {
             padding-top: 2rem;
-            padding-bottom: 2rem;
-            background-color: #f8f9fa;
+            padding-bottom: 3rem;
+            background-color: var(--body-bg);
+            color: var(--body-text-color);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+        
         .container {
-            max-width: 800px;
+            max-width: 850px;
         }
+        
         .header {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             text-align: center;
-            color: #343a40;
         }
+        
+        .app-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .app-subtitle {
+            color: var(--text-light); /* Use lighter text color */
+            font-weight: 300;
+            font-size: 1.1rem; /* Slightly larger subtitle */
+        }
+        
         .card {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 1px solid var(--card-border-color);
+            border-radius: 0.35rem;
+            background-color: var(--card-bg);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+        
         .card-header {
-            background-color: #f1f3f5;
-            font-weight: bold;
+            background-color: var(--card-header-bg);
+            border-bottom: 1px solid var(--card-border-color);
+            font-weight: 600; /* Slightly bolder */
+            color: var(--primary-color);
+            padding: 1rem 1.25rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
+        
         .btn-primary {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
+            background-color: var(--btn-primary-bg);
+            border-color: var(--btn-primary-border);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: #fff; 
+            transition: background-color 0.2s ease, border-color 0.2s ease; /* Smooth transition */
         }
+        
         .btn-primary:hover {
-            background-color: #0b5ed7;
-            border-color: #0a58ca;
+            background-color: var(--btn-primary-hover-bg);
+            border-color: var(--btn-primary-hover-border);
         }
+        
         .alert {
-            border-radius: 8px;
+            border-radius: 0.35rem;
+            border-left: 0.25rem solid var(--accent-color); /* Use accent color for alert border */
+            background-color: var(--card-bg); /* Match card background */
+            color: var(--body-text-color); /* Match body text */
+        }
+        body.dark-mode .alert {
+            border-left-color: var(--accent-color);
+        }
+
+        .form-control {
+            background-color: var(--input-bg);
+            color: var(--body-text-color);
+            border: 1px solid var(--input-border-color);
         }
         .form-control:focus {
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            box-shadow: 0 0 0 0.2rem var(--focus-ring-color);
+            border-color: var(--input-focus-border-color); 
+            background-color: var(--input-bg); /* Ensure bg stays on focus */
+            color: var(--body-text-color); /* Ensure text color stays on focus */
         }
-        .file-input-label {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background-color: #e9ecef;
-            color: #495057;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
+        
+        .file-drop-area {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 100%;
+            max-width: 100%;
+            padding: 2.5rem 1.5rem;
+            border: 2px dashed var(--input-border-color);
+            border-radius: 0.35rem;
+            transition: border-color 0.25s ease-in-out, background-color 0.3s ease;
+            background-color: var(--input-bg);
+            margin-bottom: 1rem;
             cursor: pointer;
-            transition: background-color 0.15s ease-in-out;
         }
-        .file-input-label:hover {
-            background-color: #dee2e6;
+        
+        .file-drop-area:hover, .file-drop-area.is-active {
+            border-color: var(--primary-color);
+            background-color: var(--secondary-color); /* Slight bg change on hover */
         }
-        #file-name {
-            margin-left: 10px;
+        body.dark-mode .file-drop-area:hover, body.dark-mode .file-drop-area.is-active {
+            background-color: var(--input-bg); /* Or a slightly lighter dark shade */
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-msg {
+            font-size: 1.2rem;
+            font-weight: 300;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+            color: var(--text-light); 
+        }
+        
+        .file-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+        
+        .form-section {
+            background-color: var(--card-bg); 
+            padding: 1.5rem;
+            border-radius: 0.35rem;
+            border: 1px solid var(--card-border-color); 
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .form-check-label { /* Ensure label color adapts */
+            color: var(--body-text-color);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .form-text a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .form-text a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .theme-toggler {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border-color);
+            border-radius: 50%; /* Make it circular */
+            width: 40px; /* Fixed size */
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggler:hover {
+            background-color: var(--primary-color);
+            color: var(--card-bg) !important; /* Ensure icon color changes */
+            border-color: var(--primary-dark);
+        }
+        body.dark-mode .theme-toggler {
+            color: var(--text-color); /* Ensure icon is visible in dark mode */
         }
     </style>
 </head>
 <body>
+    <button id="theme-toggle-btn" class="btn theme-toggler" title="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
     <div class="container">
         <div class="header">
-            <h1>PDF Text Extractor</h1>
-            <p class="lead">Upload a PDF to extract text using Google's Gemini AI</p>
+            <h1 class="app-title">PDF to Word Converter</h1>
+            <p class="app-subtitle">Transform PDFs into editable Word documents powered by Google Gemini AI</p>
         </div>
 
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {% for message in messages %}
-            <p>{{ message }}</p>
-            {% endfor %}
+            <div class="d-flex">
+                <div class="me-3">
+                    <i class="fas fa-exclamation-triangle fa-lg"></i>
+                </div>
+                <div>
+                    {% for message in messages %}
+                    <p class="mb-0">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endif %}
         {% endwith %}
 
-        <div class="card">
-            <div class="card-header">Upload a PDF</div>
+        <div class="card shadow">
+            <div class="card-header">
+                <i class="fas fa-file-upload me-2"></i>Upload Your PDF
+            </div>
             <div class="card-body">
-                <form method="POST" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="api_key_option" class="form-label">API Key Options</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="api_key_option" id="default_api_key" value="default" checked>
-                            <label class="form-check-label" for="default_api_key">
-                                Use default API key
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="api_key_option" id="custom_api_key" value="custom">
-                            <label class="form-check-label" for="custom_api_key">
-                                Use my own API key
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="mb-3" id="api_key_input_container">
-                        <label for="api_key" class="form-label">Custom Gemini API Key</label>
-                        <input type="text" class="form-control" id="api_key" name="api_key" 
-                               placeholder="Enter your Gemini API Key">
-                        <div class="form-text">Your API key is required to use the Google Gemini AI model.</div>
+                <form method="POST" enctype="multipart/form-data" id="upload-form">
+                    <!-- File Upload Section -->
+                    <div class="file-drop-area mb-4" id="drop-area">
+                        <i class="fas fa-file-pdf file-icon"></i>
+                        <p class="file-msg" id="file-msg">Drag & drop your PDF here or click to browse</p>
+                        <input type="file" class="file-input" name="file" id="file-input" accept=".pdf" required>
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label">PDF File</label>
-                        <div class="d-flex align-items-center">
-                            <label class="file-input-label">
-                                Browse Files
-                                <input type="file" name="file" id="file-input" style="display: none;" accept=".pdf" required>
-                            </label>
-                            <span id="file-name">No file selected</span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Output Format Selection -->
+                            <div class="form-section mb-3">
+                                <h5>
+                                    <i class="fas fa-file-export me-2"></i>
+                                    Output Format
+                                </h5>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="output_format" value="docx" id="docx_format" checked>
+                                    <label class="form-check-label" for="docx_format">
+                                        <i class="fas fa-file-word me-1"></i> Word Document (.docx)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="output_format" value="txt" id="txt_format">
+                                    <label class="form-check-label" for="txt_format">
+                                        <i class="fas fa-file-alt me-1"></i> Plain Text (.txt)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <!-- API Key Options -->
+                            <div class="form-section mb-3">
+                                <h5>
+                                    <i class="fas fa-key me-2"></i>
+                                    API Key
+                                </h5>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="api_key_option" id="default_api_key" value="default" checked>
+                                    <label class="form-check-label" for="default_api_key">
+                                        Use default API key
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="api_key_option" id="custom_api_key" value="custom">
+                                    <label class="form-check-label" for="custom_api_key">
+                                        Use my own API key
+                                    </label>
+                                </div>
+                                
+                                <div id="api_key_input_container" class="mt-3" style="display:none;">
+                                    <input type="text" class="form-control" id="api_key" name="api_key" 
+                                           placeholder="Enter your Gemini API key">
+                                    <div class="form-text"><a href="https://ai.google.dev/" target="_blank" class="text-decoration-none">Get a key from Google AI Studio <i class="fas fa-external-link-alt fa-xs"></i></a></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label">Output Format</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="output_format" value="docx" id="docx_format" checked>
-                            <label class="form-check-label" for="docx_format">
-                                DOCX Format (.docx)
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="output_format" value="txt" id="txt_format">
-                            <label class="form-check-label" for="txt_format">
-                                Plain Text Format (.txt)
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Extract Text</button>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-magic me-2"></i>Convert PDF to Text
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">Instructions</div>
-            <div class="card-body">                <h2>Instructions</h2>                <ol>
-                    <li>Enter your Gemini API key. If you don't have one, you can get it from <a href="https://ai.google.dev/" target="_blank">Google AI Studio</a>.</li>
-                    <li>Upload a PDF file (max size: 64MB).</li>
-                    <li>Select your desired output format - either DOCX or TXT.</li>
-                    <li>Click "Extract Text" to process the file.</li>
-                    <li>The extracted text will be available for download in your selected format.</li>
-                </ol>
-                <p class="text-muted small">Note: This tool works best with clear, high-quality PDFs. Processing may take some time depending on the file size and complexity.</p>
+        <div class="card shadow">
+            <div class="card-header">
+                <i class="fas fa-info-circle me-2"></i>How It Works
+            </div>
+            <div class="card-body">
+                <div class="row text-center mb-4">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="p-3">
+                            <i class="fas fa-file-upload fa-3x mb-3" style="color: var(--primary-color)"></i>
+                            <h5>1. Upload</h5>
+                            <p class="text-muted-custom">Upload your PDF file (max size: 64MB)</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="p-3">
+                            <i class="fas fa-cogs fa-3x mb-3" style="color: var(--primary-color)"></i>
+                            <h5>2. Process</h5>
+                            <p class="text-muted-custom">Our AI analyzes and extracts all text content</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="fas fa-download fa-3x mb-3" style="color: var(--primary-color)"></i>
+                            <h5>3. Download</h5>
+                            <p class="text-muted-custom">Get your converted Word or text file</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-light border">
+                    <i class="fas fa-lightbulb text-warning me-2"></i>
+                    <strong>Tip:</strong> This tool works best with clear, high-quality PDFs. Processing time depends on file size and complexity.
+                </div>
             </div>
         </div>
+        
+        <footer class="text-center mt-5 pt-3 border-top">
+            <p>&copy; 2024 PDF to Word Converter. All rights reserved.</p>
+            <p><small>Powered by Google Gemini AI</small></p>
+        </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('file-input').addEventListener('change', function(e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
-            document.getElementById('file-name').textContent = fileName;
+        // Theme toggler script
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const body = document.body;
+        const icon = themeToggleBtn.querySelector('i');
+
+        // Function to apply the saved theme or default to light
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                body.classList.remove('dark-mode');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+            // Adjust text-muted for dark mode
+            const textMutedElements = document.querySelectorAll('.text-muted-custom');
+            if (theme === 'dark') {
+                textMutedElements.forEach(el => el.style.color = 'var(--text-light)');
+            } else {
+                textMutedElements.forEach(el => el.style.color = 'var(--text-light)'); // it will use the light mode var
+            }
+            // Adjust footer border color
+             const footer = document.querySelector('footer');
+            if (footer) {
+                footer.style.borderColor = 'var(--card-border-color)';
+            }
+             // Adjust alert close button for dark mode
+            const alertCloseButtons = document.querySelectorAll('.alert .btn-close');
+            alertCloseButtons.forEach(btn => {
+                 if (theme === 'dark') {
+                    btn.classList.add('btn-close-white');
+                } else {
+                    btn.classList.remove('btn-close-white');
+                }
+            });
+        }
+
+        // Load saved theme from localStorage
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            // Check for system preference if no theme is saved
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyTheme('dark');
+                localStorage.setItem('theme', 'dark'); // Save the preference
+            } else {
+                applyTheme('light'); // Explicitly apply light theme if no preference
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                applyTheme('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                applyTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            }
         });
+
+        // API Key toggle script
+        const customApiKeyRadio = document.getElementById('custom_api_key');
+        const defaultApiKeyRadio = document.getElementById('default_api_key');
+        const apiKeyInputContainer = document.getElementById('api_key_input_container');
+        const apiKeyInput = document.getElementById('api_key');
+
+        function toggleApiKeyInput() {
+            if (customApiKeyRadio.checked) {
+                apiKeyInputContainer.style.display = 'block';
+                apiKeyInput.required = true;
+            } else {
+                apiKeyInputContainer.style.display = 'none';
+                apiKeyInput.required = false;
+                apiKeyInput.value = ''; // Clear the input when hiding
+            }
+        }
+
+        customApiKeyRadio.addEventListener('change', toggleApiKeyInput);
+        defaultApiKeyRadio.addEventListener('change', toggleApiKeyInput);
+
+        // Initialize on page load
+        toggleApiKeyInput();
+
+        // File Drop Area Script
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const fileMsg = document.getElementById('file-msg');
+        const originalFileMsg = fileMsg.textContent;
+
+        dropArea.addEventListener('click', () => fileInput.click());
+
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('is-active');
+            fileMsg.textContent = 'Release to drop the file';
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('is-active');
+            fileMsg.textContent = fileInput.files.length ? fileInput.files[0].name : originalFileMsg;
+        });
+
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('is-active');
+            const files = event.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+                fileMsg.textContent = files[0].name;
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                fileMsg.textContent = fileInput.files[0].name;
+            } else {
+                fileMsg.textContent = originalFileMsg;
+            }
+        });
+
+        // Form submission - for loading indication (optional, but good UX)
+        const uploadForm = document.getElementById('upload-form');
+        const convertButton = uploadForm.querySelector('button[type="submit"]');
+
+        uploadForm.addEventListener('submit', function() {
+            // Disable button and show loading state
+            convertButton.disabled = true;
+            convertButton.innerHTML = 
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+            
+            // You might want to show a more prominent loading overlay as well
+            // For example, creating a div that covers the screen
+        });
+
     </script>
 </body>
 </html>
