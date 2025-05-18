@@ -6,23 +6,24 @@
     <title>PDF to Word Converter</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* New Vibrant & Simple Color Palette */
-            --primary-color: #1ABC9C; /* Teal */
-            --primary-dark: #16A085; /* Darker Teal */
-            --secondary-color: #F4F6F6; /* Very light gray for body background */
-            --accent-color: #F39C12; /* Amber/Orange for specific accents - use sparingly */
-            --text-color: #34495E; /* Dark grayish blue for text */
-            --text-light: #7F8C8D; /* Lighter text for subtitles/muted text */
-            --card-bg: #FFFFFF;
-            --card-header-bg: #FFFFFF; /* Cleaner card headers */
-            --card-border-color: #EAECEE; /* Softer border */
-            --input-bg: #FFFFFF;
-            --input-border-color: #D5DBDB;
-            --input-focus-border-color: #76D7C4; /* Lighter Teal */
-            --focus-ring-color: rgba(26, 188, 156, 0.25); /* Teal based */
-            --shadow: 0 .2rem 1.5rem 0 rgba(52, 73, 94, .1); /* Softer shadow */
+            /* Simple, Professional & Vintage Color Palette */
+            --primary-color: #2c3e50; /* Dark blue/slate */
+            --primary-dark: #1a252f; /* Darker shade */
+            --secondary-color: #f8f9fa; /* Very light gray for body background */
+            --accent-color: #7f8c8d; /* Neutral gray accent */
+            --text-color: #333333; /* Dark gray for text */
+            --text-light: #6c757d; /* Medium gray for subtitles/muted text */
+            --card-bg: #ffffff;
+            --card-header-bg: #f1f1f1; /* Light gray card headers */
+            --card-border-color: #e0e0e0; /* Light gray border */
+            --input-bg: #ffffff;
+            --input-border-color: #ced4da;
+            --input-focus-border-color: #5a6268; /* Grayish */
+            --focus-ring-color: rgba(44, 62, 80, 0.25); /* Primary based */
+            --shadow: 0 .2rem 1.5rem 0 rgba(0, 0, 0, .08); /* Subtle shadow */
 
             --body-bg: var(--secondary-color);
             --body-text-color: var(--text-color);
@@ -33,19 +34,19 @@
         }
         
         body.dark-mode {
-            --primary-color: #20C9A6; /* Lighter Teal for dark mode */
-            --primary-dark: #1ABC9C;
-            --secondary-color: #2C3E50; /* Dark desaturated blue for body background */
-            --accent-color: #F39C12; 
-            --text-color: #ECF0F1; /* Light gray for text */
-            --text-light: #BDC3C7; /* Slightly darker light text */
-            --card-bg: #34495E; /* Dark grayish blue for cards */
-            --card-header-bg: #34495E;
-            --card-border-color: #4A6572; /* Softer border for dark mode */
-            --input-bg: #2C3E50; /* Darker input background */
-            --input-border-color: #4A6572;
-            --input-focus-border-color: #27AE60; /* Darker Greenish Teal */
-            --focus-ring-color: rgba(32, 201, 166, 0.3);
+            --primary-color: #34495e; /* Mid dark blue/slate */
+            --primary-dark: #2c3e50;
+            --secondary-color: #1a1a1a; /* Very dark gray for background */
+            --accent-color: #7f8c8d; 
+            --text-color: #ecf0f1; /* Light gray for text */
+            --text-light: #bdc3c7; /* Light gray for muted text */
+            --card-bg: #2c2c2c; /* Dark card background */
+            --card-header-bg: #252525; /* Slightly darker header */
+            --card-border-color: #3d3d3d; /* Dark border */
+            --input-bg: #2c2c2c; /* Dark input background */
+            --input-border-color: #4a4a4a;
+            --input-focus-border-color: #656565; /* Medium gray */
+            --focus-ring-color: rgba(52, 73, 94, 0.4);
             --shadow: 0 .2rem 1.5rem 0 rgba(0,0,0,.2); /* Darker shadow */
 
             --body-bg: var(--secondary-color);
@@ -61,12 +62,12 @@
             padding-bottom: 3rem;
             background-color: var(--body-bg);
             color: var(--body-text-color);
-            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         .container {
-            max-width: 850px;
+            max-width: 800px;
         }
         
         .header {
@@ -76,21 +77,24 @@
         
         .app-title {
             color: var(--primary-color);
+            font-family: 'Roboto Slab', serif;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
         }
         
         .app-subtitle {
-            color: var(--text-light); /* Use lighter text color */
+            color: var(--text-light);
             font-weight: 300;
-            font-size: 1.1rem; /* Slightly larger subtitle */
+            font-size: 1.1rem;
+            font-family: 'Roboto Slab', serif;
         }
         
         .card {
             box-shadow: var(--shadow);
             margin-bottom: 2rem;
             border: 1px solid var(--card-border-color);
-            border-radius: 0.35rem;
+            border-radius: 0.25rem;
             background-color: var(--card-bg);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
@@ -98,9 +102,10 @@
         .card-header {
             background-color: var(--card-header-bg);
             border-bottom: 1px solid var(--card-border-color);
-            font-weight: 600; /* Slightly bolder */
+            font-weight: 600;
             color: var(--primary-color);
             padding: 1rem 1.25rem;
+            font-family: 'Roboto Slab', serif;
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
         
@@ -108,9 +113,9 @@
             background-color: var(--btn-primary-bg);
             border-color: var(--btn-primary-border);
             padding: 0.75rem 1.5rem;
-            font-weight: 600;
+            font-weight: 500;
             color: #fff; 
-            transition: background-color 0.2s ease, border-color 0.2s ease; /* Smooth transition */
+            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
         
         .btn-primary:hover {
@@ -119,10 +124,10 @@
         }
         
         .alert {
-            border-radius: 0.35rem;
-            border-left: 0.25rem solid var(--accent-color); /* Use accent color for alert border */
-            background-color: var(--card-bg); /* Match card background */
-            color: var(--body-text-color); /* Match body text */
+            border-radius: 0.25rem;
+            border-left: 0.25rem solid var(--accent-color);
+            background-color: var(--card-bg);
+            color: var(--body-text-color);
         }
         body.dark-mode .alert {
             border-left-color: var(--accent-color);
@@ -132,12 +137,13 @@
             background-color: var(--input-bg);
             color: var(--body-text-color);
             border: 1px solid var(--input-border-color);
+            border-radius: 0.25rem;
         }
         .form-control:focus {
             box-shadow: 0 0 0 0.2rem var(--focus-ring-color);
             border-color: var(--input-focus-border-color); 
-            background-color: var(--input-bg); /* Ensure bg stays on focus */
-            color: var(--body-text-color); /* Ensure text color stays on focus */
+            background-color: var(--input-bg);
+            color: var(--body-text-color);
         }
         
         .file-drop-area {
@@ -150,7 +156,7 @@
             max-width: 100%;
             padding: 2.5rem 1.5rem;
             border: 2px dashed var(--input-border-color);
-            border-radius: 0.35rem;
+            border-radius: 0.25rem;
             transition: border-color 0.25s ease-in-out, background-color 0.3s ease;
             background-color: var(--input-bg);
             margin-bottom: 1rem;
@@ -159,10 +165,10 @@
         
         .file-drop-area:hover, .file-drop-area.is-active {
             border-color: var(--primary-color);
-            background-color: var(--secondary-color); /* Slight bg change on hover */
+            background-color: var(--secondary-color);
         }
         body.dark-mode .file-drop-area:hover, body.dark-mode .file-drop-area.is-active {
-            background-color: var(--input-bg); /* Or a slightly lighter dark shade */
+            background-color: var(--input-bg);
         }
         
         .file-input {
@@ -170,7 +176,7 @@
         }
         
         .file-msg {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 300;
             white-space: nowrap;
             overflow: hidden;
@@ -187,13 +193,20 @@
         
         .form-section {
             background-color: var(--card-bg); 
-            padding: 1.5rem;
-            border-radius: 0.35rem;
+            padding: 1.25rem;
+            border-radius: 0.25rem;
             border: 1px solid var(--card-border-color); 
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        .form-check-label { /* Ensure label color adapts */
+        .form-section h5 {
+            font-family: 'Roboto Slab', serif;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .form-check-label {
             color: var(--body-text-color);
         }
         
@@ -218,8 +231,8 @@
             background-color: var(--card-bg);
             color: var(--text-color);
             border: 1px solid var(--card-border-color);
-            border-radius: 50%; /* Make it circular */
-            width: 40px; /* Fixed size */
+            border-radius: 50%;
+            width: 40px;
             height: 40px;
             display: flex;
             align-items: center;
@@ -228,11 +241,16 @@
 
         .theme-toggler:hover {
             background-color: var(--primary-color);
-            color: var(--card-bg) !important; /* Ensure icon color changes */
+            color: var(--card-bg) !important;
             border-color: var(--primary-dark);
         }
         body.dark-mode .theme-toggler {
-            color: var(--text-color); /* Ensure icon is visible in dark mode */
+            color: var(--text-color);
+        }
+        
+        footer {
+            color: var(--text-light);
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -243,7 +261,7 @@
     <div class="container">
         <div class="header">
             <h1 class="app-title">PDF to Word Converter</h1>
-            <p class="app-subtitle">Transform PDFs into editable Word documents powered by Google Gemini AI</p>
+            <p class="app-subtitle">Transform PDFs into editable Word documents</p>
         </div>
 
         {% with messages = get_flashed_messages() %}
@@ -337,41 +355,6 @@
                 </form>
             </div>
         </div>
-
-        <div class="card shadow">
-            <div class="card-header">
-                <i class="fas fa-info-circle me-2"></i>How It Works
-            </div>
-            <div class="card-body">
-                <div class="row text-center mb-4">
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <div class="p-3">
-                            <i class="fas fa-file-upload fa-3x mb-3" style="color: var(--primary-color)"></i>
-                            <h5>1. Upload</h5>
-                            <p class="text-muted-custom">Upload your PDF file (max size: 64MB)</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <div class="p-3">
-                            <i class="fas fa-cogs fa-3x mb-3" style="color: var(--primary-color)"></i>
-                            <h5>2. Process</h5>
-                            <p class="text-muted-custom">Our AI analyzes and extracts all text content</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-3">
-                            <i class="fas fa-download fa-3x mb-3" style="color: var(--primary-color)"></i>
-                            <h5>3. Download</h5>
-                            <p class="text-muted-custom">Get your converted Word or text file</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="alert alert-light border">
-                    <i class="fas fa-lightbulb text-warning me-2"></i>
-                    <strong>Tip:</strong> This tool works best with clear, high-quality PDFs. Processing time depends on file size and complexity.
-                </div>
-            </div>
-        </div>
         
         <footer class="text-center mt-5 pt-3 border-top">
             <p>&copy; 2024 PDF to Word Converter. All rights reserved.</p>
@@ -396,13 +379,6 @@
                 body.classList.remove('dark-mode');
                 icon.classList.remove('fa-sun');
                 icon.classList.add('fa-moon');
-            }
-            // Adjust text-muted for dark mode
-            const textMutedElements = document.querySelectorAll('.text-muted-custom');
-            if (theme === 'dark') {
-                textMutedElements.forEach(el => el.style.color = 'var(--text-light)');
-            } else {
-                textMutedElements.forEach(el => el.style.color = 'var(--text-light)'); // it will use the light mode var
             }
             // Adjust footer border color
              const footer = document.querySelector('footer');
@@ -513,11 +489,7 @@
             convertButton.disabled = true;
             convertButton.innerHTML = 
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-            
-            // You might want to show a more prominent loading overlay as well
-            // For example, creating a div that covers the screen
         });
-
     </script>
 </body>
 </html>

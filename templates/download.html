@@ -6,46 +6,47 @@
     <title>Download Extracted Text</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Updated Color Palette - Teal Theme */
-            --primary-color: #1ABC9C; /* Teal */
-            --primary-dark: #16A085; /* Darker Teal */
-            --success-color: #2ECC71; /* Greener Success */
-            --success-dark: #27AE60; /* Darker Green for hover */
-
-            /* Light Theme Variables */
-            --body-bg-light: #F4F6F6;
-            --text-color-light: #34495E;
-            --text-light-muted: #7F8C8D;
-            --card-bg-light: #FFFFFF;
-            --card-header-bg-light: #FFFFFF; /* Cleaner header */
-            --card-border-light: #EAECEE; /* Softer border */
-            --card-shadow-light: 0 .2rem 1.5rem 0 rgba(52, 73, 94, .1); /* Softer shadow */
-
-            /* Dark Theme Variables */
-            --body-bg-dark: #2C3E50;
-            --text-color-dark: #ECF0F1;
-            --text-light-muted-dark: #BDC3C7;
-            --card-bg-dark: #34495E;
-            --card-header-bg-dark: #34495E;
-            --card-border-dark: #4A6572;
-            --card-shadow-dark: 0 .2rem 1.5rem 0 rgba(0,0,0,.2);
+            /* Simple, Professional & Vintage Color Palette */
+            --primary-color: #2c3e50; /* Dark blue/slate */
+            --primary-dark: #1a252f; /* Darker shade */
+            --secondary-color: #f8f9fa; /* Very light gray for body background */
+            --accent-color: #7f8c8d; /* Neutral gray accent */
+            --text-color: #333333; /* Dark gray for text */
+            --text-light: #6c757d; /* Medium gray for subtitles/muted text */
+            --success-color: #2c3e50; /* Match primary color */
+            --success-dark: #1a252f; /* Darker shade for hover */
             
-            /* Default assignments */
-            --body-bg: var(--body-bg-light);
-            --text-color: var(--text-color-light);
-            --text-muted: var(--text-light-muted);
-            --card-bg: var(--card-bg-light);
-            --card-header-bg: var(--card-header-bg-light);
-            --card-border: var(--card-border-light);
-            --card-shadow: var(--card-shadow-light);
-            --current-success-color: var(--success-color);
-            --current-success-dark-hover: var(--success-dark);
+            /* Light Theme Variables */
+            --body-bg: var(--secondary-color);
+            --card-bg: #ffffff;
+            --card-header-bg: #f1f1f1;
+            --card-border: #e0e0e0;
+            --card-shadow: 0 .2rem 1.5rem 0 rgba(0, 0, 0, .08);
+            
             --btn-primary-bg: var(--primary-color);
             --btn-primary-border: var(--primary-color);
             --btn-primary-hover-bg: var(--primary-dark);
             --btn-primary-hover-border: var(--primary-dark);
+        }
+
+        body.dark-mode {
+            --primary-color: #34495e; /* Mid dark blue/slate */
+            --primary-dark: #2c3e50;
+            --secondary-color: #1a1a1a; /* Very dark gray for background */
+            --accent-color: #7f8c8d; 
+            --text-color: #ecf0f1; /* Light gray for text */
+            --text-light: #bdc3c7; /* Light gray for muted text */
+            --success-color: #34495e;
+            --success-dark: #2c3e50;
+            
+            --body-bg: var(--secondary-color);
+            --card-bg: #2c2c2c;
+            --card-header-bg: #252525;
+            --card-border: #3d3d3d;
+            --card-shadow: 0 .2rem 1.5rem 0 rgba(0,0,0,.2);
         }
 
         body {
@@ -53,24 +54,8 @@
             padding-bottom: 2rem;
             background-color: var(--body-bg);
             color: var(--text-color);
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        body.dark-mode {
-            --body-bg: var(--body-bg-dark);
-            --text-color: var(--text-color-dark);
-            --text-muted: var(--text-light-muted-dark);
-            --card-bg: var(--card-bg-dark);
-            --card-header-bg: var(--card-header-bg-dark);
-            --card-border: var(--card-border-dark);
-            --card-shadow: var(--card-shadow-dark);
-            --current-success-color: var(--success-dark); /* Using darker success for buttons in dark mode */
-            --current-success-dark-hover: var(--success-color); /* Lighter green for hover in dark mode, or define specific dark hover */
-            /* Update primary button colors for dark mode consistency */
-            --btn-primary-bg: var(--primary-color); /* Uses dark mode primary color from :root in body.dark-mode or explicit here */
-            --btn-primary-border: var(--primary-color);
-            --btn-primary-hover-bg: var(--primary-dark);
-            --btn-primary-hover-border: var(--primary-dark);
         }
         
         .theme-toggler {
@@ -81,8 +66,8 @@
             background-color: var(--card-bg);
             color: var(--text-color);
             border: 1px solid var(--card-border);
-            border-radius: 50%; /* Make it circular */
-            width: 40px; /* Fixed size */
+            border-radius: 50%;
+            width: 40px;
             height: 40px;
             display: flex;
             align-items: center;
@@ -98,61 +83,75 @@
         .container {
             max-width: 800px;
         }
+        
         .header {
             margin-bottom: 2rem;
             text-align: center;
             color: var(--text-color); 
         }
+        
         .header h1 {
-            color: var(--primary-color); /* Header title uses primary color */
+            color: var(--primary-color);
+            font-family: 'Roboto Slab', serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
+        
         .card {
             box-shadow: var(--card-shadow);
             margin-bottom: 1.5rem;
-            border-radius: 8px;
+            border-radius: 0.25rem;
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
+        
         .card-header {
             background-color: var(--card-header-bg);
-            font-weight: 600; /* Bolder header */
-            color: var(--primary-color); /* Header text uses primary color */
+            font-weight: 600;
+            color: var(--primary-color);
             border-bottom: 1px solid var(--card-border);
+            font-family: 'Roboto Slab', serif;
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
+        
         .card-body p, .card-body ul li {
-             color: var(--text-color); /* Ensure card body text is themed */
+            color: var(--text-color);
         }
-        body.dark-mode .card-body p, body.dark-mode .card-body ul li {
-            color: var(--text-color-dark);
-        }
-
+        
         .btn-success {
-            background-color: var(--current-success-color);
-            border-color: var(--current-success-color);
-            color: #fff; /* Ensure text is white */
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+            color: #fff;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
         }
+        
         .btn-success:hover {
-            background-color: var(--current-success-dark-hover);
-            border-color: var(--current-success-dark-hover);
+            background-color: var(--success-dark);
+            border-color: var(--success-dark);
             color: #fff;
         }
+        
         .btn-primary {
             background-color: var(--btn-primary-bg);
             border-color: var(--btn-primary-border);
-            color: #fff; /* Ensure text is white */
+            color: #fff;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
         }
+        
         .btn-primary:hover {
             background-color: var(--btn-primary-hover-bg);
             border-color: var(--btn-primary-hover-border);
             color: #fff;
         }
-        /* Style for the lead paragraph */
+        
         .lead {
-            color: var(--text-muted);
-            font-size: 1.20rem; /* Slightly adjusted size */
+            color: var(--text-light);
+            font-size: 1.1rem;
             font-weight: 300;
+            font-family: 'Roboto Slab', serif;
         }
     </style>
 </head>
@@ -167,16 +166,14 @@
         </div>
 
         <div class="card">
-            <div class="card-header">Download Extracted Text</div>            <div class="card-body text-center">
+            <div class="card-header">Download Extracted Text</div>            
+            <div class="card-body text-center">
                 <p>Your document has been processed, and the extracted text is ready for download.</p>
                 
                 {% for format_type, filename in files %}
                 <div class="mb-3">
                     <a href="{{ url_for('download_file', filename=filename) }}" class="btn btn-success btn-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-2" viewBox="0 0 16 16">
-                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                        </svg>
+                        <i class="fas fa-download me-2"></i>
                         Download .{{ format_type }} File
                     </a>
                 </div>
@@ -185,7 +182,8 @@
         </div>
 
         <div class="card">
-            <div class="card-header">What's Next?</div>            <div class="card-body">
+            <div class="card-header">What's Next?</div>            
+            <div class="card-body">
                 <p>After downloading your file:</p>
                 <ul>
                     {% if files[0][0] == 'docx' %}
@@ -224,10 +222,8 @@
         if (currentSavedTheme) {
             applyDownloadTheme(currentSavedTheme);
         } else {
-            // Check for system preference if no theme is saved
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 applyDownloadTheme('dark');
-                // localStorage.setItem('theme', 'dark'); // Avoid re-setting, let user control or index page control
             }
         }
 
