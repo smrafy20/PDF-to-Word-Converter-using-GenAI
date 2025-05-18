@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Word Converter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 700px;
+        }
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #343a40;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            border: none;
+        }
+        .card-header {
+            background-color: #f1f3f5;
+            font-weight: bold;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.5rem;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+        .alert {
+            border-radius: 8px;
+        }
+        .form-control {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .file-upload-box {
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 1.5rem;
+        }
+        .file-upload-box:hover {
+            border-color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+        .file-upload-icon {
+            font-size: 2.5rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        #file-name {
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .format-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .format-option {
+            flex: 1;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .format-option.selected {
+            border-color: #0d6efd;
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+        .format-option:hover {
+            border-color: #0d6efd;
+        }
+        .format-option img {
+            height: 40px;
+            margin-bottom: 0.5rem;
+        }
+        .lead {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PDF to Word Converter</h1>
+            <p class="lead">Convert your PDF documents to editable Word files using AI</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <div class="card-header">Quick Conversion</div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <!-- API Key Section -->
+                    <div class="mb-3">
+                        <label for="api_key_option" class="form-label">API Key</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="api_key_option" id="default_api_key" value="default" checked>
+                                <label class="form-check-label" for="default_api_key">
+                                    Use default key
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="api_key_option" id="custom_api_key" value="custom">
+                                <label class="form-check-label" for="custom_api_key">
+                                    Use my key
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4" id="api_key_input_container">
+                        <input type="text" class="form-control" id="api_key" name="api_key" 
+                               placeholder="Enter your Gemini API Key">
+                    </div>
+                    
+                    <!-- File Upload Box -->
+                    <div class="file-upload-box" id="upload-box">
+                        <div class="file-upload-icon">📄</div>
+                        <h5>Drag & Drop PDF file here</h5>
+                        <p>or click to browse</p>
+                        <input type="file" name="file" id="file-input" style="display: none;" accept=".pdf" required>
+                        <div id="file-name">No file selected</div>
+                    </div>
+                    
+                    <!-- Output Format Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Output Format</label>
+                        <div class="format-options">
+                            <div class="format-option selected" data-format="docx">
+                                <img src="https://cdn-icons-png.flaticon.com/512/888/888883.png" alt="Word icon">
+                                <div>Word (.docx)</div>
+                                <input type="radio" name="output_format" value="docx" style="display: none;" checked>
+                            </div>
+                            <div class="format-option" data-format="txt">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3767/3767094.png" alt="Text icon">
+                                <div>Text (.txt)</div>
+                                <input type="radio" name="output_format" value="txt" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Convert Now</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // File upload handling
+        const uploadBox = document.getElementById('upload-box');
+        const fileInput = document.getElementById('file-input');
+        const fileName = document.getElementById('file-name');
+        
+        uploadBox.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#0d6efd';
+            uploadBox.style.backgroundColor = '#f8f9fa';
+        });
+        
+        uploadBox.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#ced4da';
+            uploadBox.style.backgroundColor = '';
+        });
+        
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#ced4da';
+            uploadBox.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileName(e.dataTransfer.files[0].name);
+            }
+        });
+        
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files.length) {
+                updateFileName(e.target.files[0].name);
+            } else {
+                updateFileName('No file selected');
+            }
+        });
+        
+        function updateFileName(name) {
+            fileName.textContent = name;
+            if (name !== 'No file selected') {
+                fileName.style.color = '#0d6efd';
+                fileName.style.fontWeight = 'bold';
+            } else {
+                fileName.style.color = '';
+                fileName.style.fontWeight = '';
+            }
+        }
+        
+        // Format selection
+        const formatOptions = document.querySelectorAll('.format-option');
+        formatOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                formatOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                option.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+        
+        // Show/hide API key input based on selection
+        const apiKeyOption = document.querySelectorAll('input[name="api_key_option"]');
+        const apiKeyInput = document.getElementById('api_key_input_container');
+        
+        function toggleApiKeyInput() {
+            if (document.getElementById('custom_api_key').checked) {
+                apiKeyInput.style.display = 'block';
+            } else {
+                apiKeyInput.style.display = 'none';
+            }
+        }
+        
+        apiKeyOption.forEach(option => {
+            option.addEventListener('change', toggleApiKeyInput);
+        });
+        
+        // Initialize on page load
+        toggleApiKeyInput();
+    </script>
+</body>
+</html>

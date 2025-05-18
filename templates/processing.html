@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converting PDF</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            width: 90%; 
+            max-width: 700px; 
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #0d6efd;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        .progress-container { 
+            width: 100%; 
+            background-color: #e9ecef; 
+            border-radius: 30px; 
+            margin-bottom: 25px; 
+            overflow: hidden;
+            border: 1px solid #ced4da;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .progress-bar { 
+            width: 0%; 
+            height: 30px; 
+            background-color: #0d6efd;
+            text-align: center; 
+            line-height: 30px; 
+            color: white; 
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 30px 0 0 30px;
+            transition: width 0.5s ease-in-out, background-color 0.5s ease; 
+            background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            animation: progress-bar-stripes 1s linear infinite;
+        }
+        @keyframes progress-bar-stripes {
+            0% {
+                background-position: 1rem 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+        .progress-bar.completed {
+            background-color: #198754;
+            border-radius: 30px;
+            animation: none;
+            background-image: none;
+        }
+        .progress-bar.error {
+            background-color: #dc3545;
+            border-radius: 30px;
+            animation: none;
+            background-image: none;
+        }
+        .status-message { 
+            margin-bottom: 25px; 
+            font-size: 1.1em; 
+            color: #495057;
+            min-height: 2em;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: rgba(13, 110, 253, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .status-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        .download-links a, .action-links a { 
+            display: inline-block; 
+            margin-top: 15px;
+            margin-right: 10px;
+            padding: 12px 24px; 
+            background-color: #0d6efd; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 30px; 
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .download-links a:hover, .action-links a:hover { 
+            background-color: #0b5ed7; 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+        }
+        .action-links a.secondary {
+            background-color: #6c757d;
+        }
+        .action-links a.secondary:hover {
+            background-color: #5a6268;
+        }
+        .error-message { 
+            color: #dc3545; 
+            font-weight: bold; 
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(220, 53, 69, 0.1);
+            border-radius: 10px;
+        }
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-left: 10px;
+            vertical-align: text-bottom;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 30px;
+            right: 30px;
+            height: 2px;
+            background-color: #e9ecef;
+            z-index: 0;
+        }
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            color: #6c757d;
+            font-weight: bold;
+            border: 2px solid #dee2e6;
+        }
+        .step.active {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+        .step.completed {
+            background-color: #198754;
+            color: white;
+            border-color: #198754;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Converting Your PDF</h1>
+        
+        <div class="step-indicator">
+            <div class="step active" id="step1">1</div>
+            <div class="step" id="step2">2</div>
+            <div class="step" id="step3">3</div>
+        </div>
+        
+        <div class="status-message" id="statusMessage">
+            <span class="status-icon">⚙️</span>
+            <span id="statusText">Initializing conversion process...</span>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+        </div>
+
+        <div class="download-links" id="downloadLinks"></div>
+        <div class="action-links" id="actionLinks"></div>
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+    </div>
+
+    <script>
+        const taskId = "{{ session.get('current_task_id', 'null') }}";
+        const progressBar = document.getElementById('progressBar');
+        const statusMessage = document.getElementById('statusMessage');
+        const statusText = document.getElementById('statusText');
+        const downloadLinksDiv = document.getElementById('downloadLinks');
+        const actionLinksDiv = document.getElementById('actionLinks');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const spinner = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+
+        function updateStatus(message, showSpinner = true, icon = '⚙️') {
+            statusText.textContent = message;
+            const statusIcon = statusMessage.querySelector('.status-icon');
+            statusIcon.textContent = icon;
+            
+            if (showSpinner) {
+                if (!statusMessage.querySelector('.spinner-border')) {
+                    statusMessage.appendChild(document.createElement('div')).outerHTML = spinner;
+                }
+            } else {
+                const spinnerElement = statusMessage.querySelector('.spinner-border');
+                if (spinnerElement) {
+                    spinnerElement.remove();
+                }
+            }
+        }
+        
+        function updateSteps(currentStep) {
+            step1.classList.remove('active', 'completed');
+            step2.classList.remove('active', 'completed');
+            step3.classList.remove('active', 'completed');
+            
+            if (currentStep >= 1) step1.classList.add('completed');
+            if (currentStep >= 2) step2.classList.add('completed');
+            if (currentStep === 3) step3.classList.add('completed');
+            
+            if (currentStep === 1) step1.classList.add('active');
+            else if (currentStep === 2) step2.classList.add('active');
+            else if (currentStep === 3) step3.classList.add('active');
+        }
+
+        function updateProgress() {
+            if (taskId === 'null') {
+                updateStatus("Error: No task ID found. Cannot track progress.", false, '❌');
+                errorMessageDiv.textContent = "Please try uploading your file again.";
+                errorMessageDiv.style.display = 'block';
+                progressBar.style.width = '100%';
+                progressBar.textContent = 'Error';
+                progressBar.classList.add('error');
+                addHomeLink("Try Uploading Again");
+                return;
+            }
+
+            fetch(`/progress/${taskId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server responded with ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let currentStep = 1;
+                    let statusIcon = '⚙️';
+                    
+                    if (data.percentage >= 20) currentStep = 2;
+                    if (data.status === 'completed') currentStep = 3;
+                    
+                    updateSteps(currentStep);
+                    
+                    // Set icon based on current progress stage
+                    if (data.percentage < 20) statusIcon = '🔄';
+                    else if (data.percentage < 90) statusIcon = '📄';
+                    else if (data.status === 'completed') statusIcon = '✅';
+                    else if (data.status === 'error') statusIcon = '❌';
+                    
+                    updateStatus(data.message || 'Processing...', 
+                                data.status === 'processing' || data.status === 'initializing',
+                                statusIcon);
+                    
+                    const percentage = data.percentage || 0;
+                    progressBar.style.width = percentage + '%';
+                    progressBar.textContent = percentage + '%';
+                    progressBar.setAttribute('aria-valuenow', percentage);
+
+                    if (data.status === 'completed') {
+                        clearInterval(intervalId);
+                        progressBar.classList.add('completed');
+                        
+                        if (data.result && data.result.length > 0) {
+                            let downloadMsg = document.createElement('p');
+                            downloadMsg.innerHTML = "Your file is ready! 🎉";
+                            downloadMsg.style.fontSize = "1.2rem";
+                            downloadMsg.style.fontWeight = "bold";
+                            downloadMsg.style.marginBottom = "20px";
+                            downloadLinksDiv.appendChild(downloadMsg);
+                            
+                            data.result.forEach(fileInfo => {
+                                const link = document.createElement('a');
+                                link.href = `/download/${fileInfo.name}`;
+                                link.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-2" viewBox="0 0 16 16">
+                                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                </svg> Download File`;
+                                link.setAttribute('download', fileInfo.name);
+                                downloadLinksDiv.appendChild(link);
+                            });
+                        } else {
+                             downloadLinksDiv.innerHTML = "<p>No files were generated, or an issue occurred during file creation.</p>";
+                        }
+                        addHomeLink("Convert Another PDF");
+
+                    } else if (data.status === 'error') {
+                        clearInterval(intervalId);
+                        progressBar.classList.add('error');
+                        updateStatus(`Error: ${data.message}`, false, '❌');
+                        errorMessageDiv.textContent = data.message || "An unspecified error occurred.";
+                        errorMessageDiv.style.display = 'block';
+                        addHomeLink("Try Again");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching progress:', error);
+                    updateStatus('Connection error. Please try refreshing the page.', false, '❌');
+                    errorMessageDiv.textContent = 'Could not retrieve progress. The server might be busy or the task may have expired.';
+                    errorMessageDiv.style.display = 'block';
+                    progressBar.style.width = '100%';
+                    progressBar.textContent = 'Connection Error';
+                    progressBar.classList.add('error');
+                    clearInterval(intervalId);
+                    addHomeLink("Back to Home");
+                });
+        }
+
+        function addHomeLink(text) {
+            actionLinksDiv.innerHTML = ''; // Clear previous links
+            const homeLink = document.createElement('a');
+            homeLink.href = "{{ url_for('index') }}"; // Make sure 'index' is your main page route
+            homeLink.textContent = text;
+            homeLink.classList.add('secondary');
+            actionLinksDiv.appendChild(homeLink);
+        }
+
+        let intervalId;
+        if (taskId && taskId !== 'null') {
+            updateStatus("Initializing conversion...");
+            intervalId = setInterval(updateProgress, 2000); // Poll every 2 seconds
+            updateProgress(); // Initial call to get status immediately
+        } else {
+            updateStatus("Error: Task ID is missing. Cannot track progress.", false, '❌');
+            errorMessageDiv.textContent = "Unable to track conversion progress. Please try uploading your file again.";
+            errorMessageDiv.style.display = 'block';
+            progressBar.style.width = '100%';
+            progressBar.textContent = 'Error - No Task ID';
+            progressBar.classList.add('error');
+            addHomeLink("Return to Upload Page");
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

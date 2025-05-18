@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Your Converted File</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 700px;
+        }
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #343a40;
+        }
+        .card {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            border-radius: 16px;
+            border: none;
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: #f1f3f5;
+            font-weight: 600;
+            padding: 1.2rem 1.5rem;
+            border-bottom: none;
+        }
+        .card-success-header {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .card-body {
+            padding: 2rem;
+        }
+        .card-body.text-center {
+            padding: 2.5rem;
+        }
+        .success-icon {
+            font-size: 4rem;
+            color: #198754;
+            margin-bottom: 1.5rem;
+        }
+        .btn-success {
+            background-color: #198754;
+            border-color: #198754;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        .btn-success:hover {
+            background-color: #157347;
+            border-color: #146c43;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            padding: 0.7rem 1.5rem;
+            font-weight: 500;
+            border-radius: 30px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+            transform: translateY(-2px);
+        }
+        .download-icon {
+            height: 70px;
+            margin-bottom: 1rem;
+        }
+        .file-info {
+            background-color: rgba(13, 110, 253, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .file-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        .tips-list {
+            padding-left: 1rem;
+        }
+        .tips-list li {
+            margin-bottom: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Conversion Complete!</h1>
+            <p class="lead">Your file has been successfully converted and is ready to download</p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <div class="success-icon">✅</div>
+                <h2 class="mb-4">Your file is ready</h2>
+                
+                {% for file in files %}
+                <div class="file-info mb-3">
+                    {% if file.type == 'docx' %}
+                    <img src="https://cdn-icons-png.flaticon.com/512/888/888883.png" alt="Word icon" class="download-icon">
+                    <h5>Word Document (.docx)</h5>
+                    {% elif file.type == 'txt' %}
+                    <img src="https://cdn-icons-png.flaticon.com/512/3767/3767094.png" alt="Text icon" class="download-icon">
+                    <h5>Text File (.txt)</h5>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <a href="{{ url_for('download_file', filename=file.name) }}" class="btn btn-success btn-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-2" viewBox="0 0 16 16">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                        </svg>
+                        Download Now
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Next Steps</div>
+            <div class="card-body">
+                <p>Here's what you should know about your converted file:</p>
+                
+                <ul class="tips-list">
+                    {% if files[0].type == 'docx' %}
+                    <li><span class="file-icon">📝</span> Your document can be opened with Microsoft Word, Google Docs, or any word processor.</li>
+                    <li><span class="file-icon">📄</span> Each page of the original PDF appears on its own page in the document.</li>
+                    <li><span class="file-icon">✏️</span> You can now edit and format the content as needed.</li>
+                    {% elif files[0].type == 'txt' %}
+                    <li><span class="file-icon">📝</span> Your text file can be opened with any text editor like Notepad, TextEdit, or word processor.</li>
+                    <li><span class="file-icon">📄</span> Page breaks from the original PDF are marked in the text.</li>
+                    <li><span class="file-icon">🔍</span> You can search and copy text from the document easily.</li>
+                    {% endif %}
+                </ul>
+                
+                <div class="d-grid mt-4">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">Convert Another File</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
