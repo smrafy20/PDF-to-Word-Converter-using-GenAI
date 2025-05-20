@@ -1,25 +1,25 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_file, jsonify, session
 import os
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"" # Set your actual path here
+
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file, jsonify, session
 import tempfile
 import shutil
 import time
 import threading
 import uuid
 from werkzeug.utils import secure_filename
-import gemini  # Import your existing module
-import concurrent.futures  # For parallel processing
+import ocr  # Use the new OCR module
+import concurrent.futures
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Secret key for flashing messages
+app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  # 64MB max upload size
+app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024
 
 # Create uploads folder if it doesn't exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 ALLOWED_EXTENSIONS = {'pdf'}
-DEFAULT_API_KEY = ""  # Replace with your actual API key
-
 # Dictionary to store processing tasks
 processing_tasks = {}
 
@@ -29,17 +29,6 @@ def allowed_file(filename):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        # Check API key selection
-        api_key_option = request.form.get('api_key_option', 'default')
-        
-        if api_key_option == 'default':
-            api_key = DEFAULT_API_KEY
-        else:
-            api_key = request.form.get('api_key')
-            if not api_key:
-                flash('Please provide an API key')
-                return redirect(request.url)
-        
         # Get selected output format
         output_format = request.form.get('output_format')
         if not output_format:
@@ -81,7 +70,7 @@ def index():
             # Start processing in a background thread
             thread = threading.Thread(
                 target=process_pdf_with_progress,
-                args=(task_id, filepath, api_key, output_format)
+                args=(task_id, filepath, output_format)
             )
             thread.daemon = True
             thread.start()
@@ -109,7 +98,7 @@ def too_large(e):
     return redirect(url_for('index'))
 
 # Process a batch of images in parallel with progress tracking
-def process_images_with_progress(image_paths, model, task_id):
+def process_images_with_progress(image_paths, task_id):
     """Process multiple images in parallel with progress updates for the web app"""
     task = processing_tasks[task_id]
     max_workers = min(os.cpu_count() or 4, 8)  # Max 8 concurrent requests
@@ -132,7 +121,7 @@ def process_images_with_progress(image_paths, model, task_id):
             processing_tasks[task_id] = task  # Update task
             
             # Extract text using optimized image
-            extracted_text = gemini.extract_text_from_image(path, model)
+            extracted_text = ocr.extract_text_from_image(path)
             
             # Store result
             if extracted_text is None or "--- ERROR:" in extracted_text:
@@ -163,7 +152,7 @@ def process_images_with_progress(image_paths, model, task_id):
     
     return results
 
-def process_pdf_with_progress(task_id, filepath, api_key, output_format):
+def process_pdf_with_progress(task_id, filepath, output_format):
     task = processing_tasks[task_id]
     original_filename_base = os.path.splitext(task['filename'])[0]
     temp_dir_for_images = None  # Initialize to None
@@ -171,23 +160,12 @@ def process_pdf_with_progress(task_id, filepath, api_key, output_format):
 
     try:
         task['status'] = 'processing'
-        task['message'] = 'Initializing AI model...'
-        task['percentage'] = 5 # Small percentage for initialization
-        processing_tasks[task_id] = task # Update task
-
-        model = gemini.setup_gemini(api_key)
-        if not model:
-            task['status'] = 'error'
-            task['message'] = 'Failed to initialize the Gemini model. Please check your API key.'
-            task['percentage'] = 100 # Mark as done for progress bar
-            processing_tasks[task_id] = task # Update task
-            return
-
         task['message'] = 'Converting PDF to images...'
         task['percentage'] = 10 # Progress after init
         processing_tasks[task_id] = task # Update task
 
-        image_paths, temp_dir_for_images = gemini.convert_pdf_to_images(filepath)
+        # Convert PDF to images using OCR module
+        image_paths, temp_dir_for_images = ocr.convert_pdf_to_images(filepath)
         if not image_paths or temp_dir_for_images is None:
             task['status'] = 'error'
             task['message'] = 'Failed to convert PDF to images.'
@@ -201,7 +179,7 @@ def process_pdf_with_progress(task_id, filepath, api_key, output_format):
         processing_tasks[task_id] = task # Update task
 
         # Process images in parallel with progress tracking
-        all_extracted_text = process_images_with_progress(image_paths, model, task_id)
+        all_extracted_text = process_images_with_progress(image_paths, task_id)
         has_errors_during_extraction = any("--- ERROR:" in text if text else True for text in all_extracted_text)
 
         task['message'] = 'Generating output file...'
@@ -232,7 +210,7 @@ def process_pdf_with_progress(task_id, filepath, api_key, output_format):
                 for i, page_text in enumerate(all_extracted_text):
                     txt_file.write(page_text)
                     if i < len(all_extracted_text) - 1:
-                        txt_file.write('\\n\\n--- PAGE BREAK ---\\n\\n')
+                        txt_file.write('\n\n--- PAGE BREAK ---\n\n')
             generated_files_info.append({'type': 'txt', 'name': txt_filename})
 
         end_time = time.time()
