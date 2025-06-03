@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file, jsonify, session
 import os
-import tempfile
 import shutil
-import time
 import threading
 import uuid
 from werkzeug.utils import secure_filename
@@ -17,7 +15,6 @@ app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  # 64MB max upload size
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 ALLOWED_EXTENSIONS = {'pdf'}
-DEFAULT_API_KEY = ""  # Replace with your actual API key
 
 # Dictionary to store processing tasks
 processing_tasks = {}
@@ -28,16 +25,11 @@ def allowed_file(filename):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        # Check API key selection
-        api_key_option = request.form.get('api_key_option', 'default')
-        
-        if api_key_option == 'default':
-            api_key = DEFAULT_API_KEY
-        else:
-            api_key = request.form.get('api_key')
-            if not api_key:
-                flash('Please provide an API key')
-                return redirect(request.url)
+        # Get API key from form
+        api_key = request.form.get('api_key')
+        if not api_key:
+            flash('Please provide a valid Gemini API key')
+            return redirect(request.url)
         
         # Get selected output format
         output_format = request.form.get('output_format')
@@ -103,7 +95,7 @@ def download_file(filename):
     return send_file(file_path, as_attachment=True)
 
 @app.errorhandler(413)
-def too_large(e):
+def too_large(_):
     flash('File is too large (maximum size is 64MB).')
     return redirect(url_for('index'))
 

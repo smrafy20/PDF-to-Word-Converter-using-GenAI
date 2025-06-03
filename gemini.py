@@ -1,7 +1,6 @@
 # Import necessary libraries
 import os
 import tempfile
-from PyPDF2 import PdfReader
 import pdf2image
 from PIL import Image
 import google.generativeai as genai
@@ -9,9 +8,6 @@ import io
 import sys  # For exiting gracefully
 import shutil  # For cleanup
 from docx import Document  # For creating .docx files
-
-# Set your Google API key directly in the code
-API_KEY = "AIzaSyB0yZWHCh_GsBuzlgeSrwFa84DMztRNUxQ"  # Replace with your actual API key
 
 # Input PDF file (in the same directory as this script)
 INPUT_PDF = "bmcq.pdf"  # Replace with your actual PDF filename
@@ -105,8 +101,15 @@ def extract_text_from_image(image_path, model):
 
 # Main function
 def main():
-    # Use the API key defined at the top of the file
-    model = setup_gemini(API_KEY)
+    # Get API key from environment variable or user input
+    api_key = os.environ.get('GEMINI_API_KEY')
+    if not api_key:
+        api_key = input("Please enter your Gemini API key: ").strip()
+        if not api_key:
+            print("API key is required to run this script.")
+            sys.exit(1)
+
+    model = setup_gemini(api_key)
     if not model:
         print("Failed to initialize model. Please check your API key.")
         sys.exit(1)
