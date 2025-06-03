@@ -1,14 +1,15 @@
-# PDF Text Extractor with Google Gemini AI
+# PDF to Word Converter using Gemini AI
 
-A web application that uses Google's Gemini AI to extract text from PDF documents. This tool is especially effective for multilingual documents and can handle Bangla text.
+A professional web application that converts PDF documents to editable Word files using Google's Gemini AI. Features a clean, user-friendly interface with advanced AI model selection.
 
 ## Features
 
-- Upload PDF files through a user-friendly web interface
-- Convert PDFs to images for better processing
-- Extract text from images using Google's Gemini AI model
-- Save extracted text as Word (DOCX) documents
-- Support for multilingual text extraction
+- **Multiple AI Models**: Choose from Gemini 2.0 Flash, Gemini 2.5 Flash Preview, or Gemini 1.5 Flash
+- **Drag & Drop Upload**: Easy PDF file upload with progress tracking
+- **Multiple Output Formats**: Export as Word (.docx) or Plain Text (.txt)
+- **Real-time Processing**: Live progress updates with percentage tracking
+- **Secure**: Your API key is never stored on our servers
+- **Multilingual Support**: Excellent for various languages including Bangla text
 
 ## Prerequisites
 
@@ -63,41 +64,42 @@ Before running this application, you'll need:
    ```
 
 3. Use the web interface to:
-   - Choose between using the default API key or providing your own Gemini API key
-   - Upload a PDF file (maximum size: 64MB)
-   - Select output format (DOCX or TXT)
-   - Monitor real-time progress with percentage and time tracking
-   - Download the extracted text in your chosen format when processing completes
+   - **Select AI Model**: Choose from 3 available Gemini models
+   - **Enter API Key**: Provide your own Gemini API key
+   - **Upload PDF**: Drag & drop or browse (max 64MB)
+   - **Choose Format**: Word (.docx) or Text (.txt)
+   - **Monitor Progress**: Real-time processing updates
+   - **Download**: Get your converted file when complete
+
+## Available AI Models
+
+- **Gemini 2.0 Flash**: Latest multimodal model with next-gen features
+- **Gemini 2.5 Flash Preview**: High-performance model with excellent accuracy
+- **Gemini 1.5 Flash**: Fast and reliable (recommended for most users)
 
 ## Configuration
 
-The application uses the following default settings:
-
-- Upload folder: `./uploads` (created automatically)
-- Maximum file size: 64MB (increased from 16MB)
-- Allowed file extensions: PDF only
-- Default API key: Included in the application
-- Processing tasks tracked with unique IDs
+- Upload folder: `./uploads` (auto-created)
+- Max file size: 64MB
+- Supported formats: PDF input, DOCX/TXT output
+- API key: User-provided (secure, not stored)
 
 ## Project Structure
 
 ```
-.
 ├── app.py                 # Flask web application
-├── gemini.py              # Core PDF processing and AI text extraction logic
-├── requirements.txt       # Python dependencies
+├── gemini.py              # AI text extraction logic
+├── requirements.txt       # Dependencies
 ├── templates/             # HTML templates
-│   ├── index.html         # Main upload page
-│   └── download.html      # Download page
-└── uploads/               # Folder for storing uploaded files and results
+└── uploads/               # File storage
 ```
 
 ## Troubleshooting
 
-- **"Failed to initialize the Gemini model"**: Check that your API key is correct and has access to the Gemini model.
-- **"Failed to convert PDF to images"**: Make sure Poppler is installed correctly and in your PATH.
-- **Processing takes a long time**: This is normal for large or complex PDFs. The extraction process involves converting each page to an image and sending it to the Gemini API.
-- **Some text is not extracted correctly**: The accuracy depends on the quality of the PDF and how the text is represented (as text or as images).
+- **Model initialization fails**: Verify your API key and model availability
+- **PDF conversion issues**: Ensure Poppler is installed and in PATH
+- **Slow processing**: Normal for large PDFs (each page processed individually)
+- **Extraction accuracy**: Depends on PDF quality and text representation
 
 ## License
 
