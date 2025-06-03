@@ -107,3 +107,6 @@ The application uses the following default settings:
 
 - This project uses Google's Gemini AI model for text extraction
 - PDF to image conversion is handled by the pdf2image library
+
+Choose model feature added.
+![image](https://github.com/user-attachments/assets/58f1664f-9cd0-4e92-ad64-441204b030fd)
