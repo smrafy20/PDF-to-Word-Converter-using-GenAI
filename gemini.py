@@ -13,10 +13,9 @@ from docx import Document  # For creating .docx files
 INPUT_PDF = "bmcq.pdf"  # Replace with your actual PDF filename
 
 # Set up Gemini model
-def setup_gemini(api_key):
+def setup_gemini(api_key, model_name):
     genai.configure(api_key=api_key)
-    model_name = 'gemini-1.5-flash'  # Changed from gemini-2.5-flash-preview-04-17
-    
+
     print(f"Initializing Gemini model: {model_name}")
     try:
         model = genai.GenerativeModel(model_name)

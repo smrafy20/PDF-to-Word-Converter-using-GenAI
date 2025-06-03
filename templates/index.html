@@ -128,14 +128,14 @@
             border-left-color: var(--accent-color);
         }
 
-        .form-control {
+        .form-control, .form-select {
             background-color: var(--input-bg);
             color: var(--body-text-color);
             border: 1px solid var(--input-border-color);
         }
-        .form-control:focus {
+        .form-control:focus, .form-select:focus {
             box-shadow: 0 0 0 0.2rem var(--focus-ring-color);
-            border-color: var(--input-focus-border-color); 
+            border-color: var(--input-focus-border-color);
             background-color: var(--input-bg); /* Ensure bg stays on focus */
             color: var(--body-text-color); /* Ensure text color stays on focus */
         }
@@ -281,7 +281,26 @@
                     </div>
                     
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <!-- Model Selection -->
+                            <div class="form-section mb-3">
+                                <h5>
+                                    <i class="fas fa-brain me-2"></i>
+                                    AI Model
+                                </h5>
+                                <select class="form-select" name="model_name" id="model_name" required>
+                                    <option value="">Select a model</option>
+                                    {% for model_key, model_name in available_models.items() %}
+                                    <option value="{{ model_key }}" {% if model_key == 'gemini-1.5-flash' %}selected{% endif %}>
+                                        {{ model_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">Choose the AI model for text extraction</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
                             <!-- Output Format Selection -->
                             <div class="form-section mb-3">
                                 <h5>
@@ -302,8 +321,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="col-md-6">
+
+                        <div class="col-md-4">
                             <!-- API Key Input -->
                             <div class="form-section mb-3">
                                 <h5>

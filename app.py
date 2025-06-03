@@ -16,6 +16,13 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 ALLOWED_EXTENSIONS = {'pdf'}
 
+# Available Gemini models
+AVAILABLE_MODELS = {
+    'gemini-2.0-flash': 'Gemini 2.0 Flash',
+    'gemini-2.5-flash-preview-04-17': 'Gemini 2.5 Flash Preview',
+    'gemini-1.5-flash': 'Gemini 1.5 Flash'
+}
+
 # Dictionary to store processing tasks
 processing_tasks = {}
 
@@ -30,7 +37,13 @@ def index():
         if not api_key:
             flash('Please provide a valid Gemini API key')
             return redirect(request.url)
-        
+
+        # Get selected model
+        selected_model = request.form.get('model_name')
+        if not selected_model or selected_model not in AVAILABLE_MODELS:
+            flash('Please select a valid model')
+            return redirect(request.url)
+
         # Get selected output format
         output_format = request.form.get('output_format')
         if not output_format:
@@ -65,14 +78,15 @@ def index():
                 'message': 'Initializing processing...',
                 'result': None,
                 'output_format': output_format,
+                'model_name': selected_model,
                 'filename': filename,
                 'filepath': filepath
             }
-            
+
             # Start processing in a background thread
             thread = threading.Thread(
                 target=process_pdf_with_progress,
-                args=(task_id, filepath, api_key, output_format)
+                args=(task_id, filepath, api_key, selected_model, output_format)
             )
             thread.daemon = True
             thread.start()
@@ -82,8 +96,8 @@ def index():
         else:
             flash('File type not allowed. Please upload a PDF file.')
             return redirect(request.url)
-    
-    return render_template('index.html')
+
+    return render_template('index.html', available_models=AVAILABLE_MODELS)
 
 @app.route('/download/<filename>')
 def download_file(filename):
@@ -99,21 +113,21 @@ def too_large(_):
     flash('File is too large (maximum size is 64MB).')
     return redirect(url_for('index'))
 
-def process_pdf_with_progress(task_id, filepath, api_key, output_format):
+def process_pdf_with_progress(task_id, filepath, api_key, model_name, output_format):
     task = processing_tasks[task_id]
     original_filename_base = os.path.splitext(task['filename'])[0]
     temp_dir_for_images = None  # Initialize to None
 
     try:
         task['status'] = 'processing'
-        task['message'] = 'Initializing AI model...'
+        task['message'] = f'Initializing {AVAILABLE_MODELS.get(model_name, model_name)} model...'
         task['percentage'] = 5 # Small percentage for initialization
         processing_tasks[task_id] = task # Update task
 
-        model = gemini.setup_gemini(api_key)
+        model = gemini.setup_gemini(api_key=api_key, model_name=model_name)
         if not model:
             task['status'] = 'error'
-            task['message'] = 'Failed to initialize the Gemini model. Please check your API key.'
+            task['message'] = f'Failed to initialize the {AVAILABLE_MODELS.get(model_name, model_name)} model. Please check your API key and model availability.'
             task['percentage'] = 100 # Mark as done for progress bar
             processing_tasks[task_id] = task # Update task
             return
